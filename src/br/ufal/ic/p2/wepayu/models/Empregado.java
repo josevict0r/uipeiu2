@@ -8,12 +8,12 @@ public class Empregado {
     private String nome;
     private String endereco;
     private String tipo;
-    private float salario;
+    private String salario;
 
     private ArrayList<Empregado> empregados = new ArrayList<Empregado>();
     
     
-    public Empregado(String nome, String endereco, String tipo, float salario){
+    public Empregado(String nome, String endereco, String tipo, String salario){
     	//public Empregado(String nome, String endereco, String tipo, float salario) throws EmpregadoNaoExisteException {
         this.nome = nome;
         this.endereco = endereco;
@@ -33,15 +33,15 @@ public class Empregado {
         return tipo;
     }
 
-    public float getSalario() {
+    public String getSalario() {
         return salario;
     }
 
     
-    public String AdicionarEmpregado(String nome, String endereco, String tipo, float salario) throws NomeNulo, EnderecoNulo, TipoInvalido {
+    public String AdicionarEmpregado(String nome, String endereco, String tipo, String salario) throws NomeNulo, EnderecoNulo, TipoInvalido, SalarioNulo, SalarioNegativo, SalarioNumerico {
     	Empregado novo = new Empregado(nome, endereco, tipo, salario);
     	String id = UUID.randomUUID().toString();
-    	
+    	//char menos = novo.salario.charAt(0);
     	if(novo.nome.isBlank()) {
     		//System.out.print("CUUUUU");
     		throw new NomeNulo();
@@ -50,11 +50,31 @@ public class Empregado {
     		//System.out.print("CUUUUU");
     		throw new EnderecoNulo();
     	}
-    	if(novo.tipo != "horista" && novo.tipo != "assalariado" && novo.tipo != "comissionado") {
+    	//System.out.print(novo.tipo);
+    	if(!(novo.tipo.equals("horista")) && !(novo.tipo.equals("assalariado")) && !(novo.tipo.equals("comissionado"))) {
+    
     		throw new TipoInvalido();
+    	}
+    	if(novo.salario.isBlank()) {
+    		throw new SalarioNulo();
+    	}
+    	if(novo.salario.contains("-")) {
+    		throw new SalarioNegativo();
+    	}
+    	if(!isNumeric(novo.salario)) {
+    		throw new SalarioNumerico();
     	}
     	
     	empregados.add(novo);
     	return id;
     }
+    
+    public static boolean isNumeric(String str) { 
+    	  try {  
+    	    Double.parseDouble(str);  
+    	    return true;
+    	  } catch(NumberFormatException e){  
+    	    return false;  
+    	  }  
+    	}
 }

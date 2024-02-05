@@ -13,7 +13,7 @@ public class Facade {
 
 	private Empregado empregado;
 	
-	public String criarEmpregado(String nome, String endereco, String tipo, float salario) throws NomeNulo, EnderecoNulo, TipoInvalido {
+	public String criarEmpregado(String nome, String endereco, String tipo, String salario) throws NomeNulo, EnderecoNulo, TipoInvalido, SalarioNulo, SalarioNegativo, SalarioNumerico {
 		empregado = new Empregado(nome, endereco, tipo, salario);
 		//if(empregado.getNome() != null) {System.out.print(nome + "1");}
 		return empregado.AdicionarEmpregado(nome, endereco, tipo, salario);
