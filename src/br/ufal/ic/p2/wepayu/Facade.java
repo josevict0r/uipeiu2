@@ -2,7 +2,8 @@ package br.ufal.ic.p2.wepayu;
 
 import br.ufal.ic.p2.wepayu.Exception.*;
 //import br.ufal.ic.p2.wepayu.Exception.EmpregadoNaoExisteException;
-import br.ufal.ic.p2.wepayu.models.Empregado;
+//import br.ufal.ic.p2.wepayu.models.Empregado;
+import br.ufal.ic.p2.wepayu.controlador.ControladorEmpregados;
 
 //import java.util.ArrayList;
 //import java.util.HashMap;
@@ -11,12 +12,28 @@ import br.ufal.ic.p2.wepayu.models.Empregado;
 
 public class Facade {
 
-	private Empregado empregado;
+	//private ControladorEmpregados controlador;
 	
-	public String criarEmpregado(String nome, String endereco, String tipo, String salario) throws NomeNulo, EnderecoNulo, TipoInvalido, SalarioNulo, SalarioNegativo, SalarioNumerico {
-		empregado = new Empregado(nome, endereco, tipo, salario);
+	public void zerarSistema() {
+		ControladorEmpregados.esqueci();
+	}
+	
+	public void encerrarSistema() {
+		ControladorEmpregados.encerrarSistema();
+	}
+	
+	public String getAtributoEmpregado(String emp, String atributo) throws EmpregadoNaoExiste, IdNula, AtributoNaoExiste {
+		return ControladorEmpregados.getAtributoEmpregado(emp, atributo);
+	}	
+	public String criarEmpregado(String nome, String endereco, String tipo, String salario) throws NomeNulo, EnderecoNulo, TipoInvalido, SalarioNulo, SalarioNegativo, SalarioNumerico, TipoNaoAplicavel {
+		//controller = new Empregado(nome, endereco, tipo, salario);
 		//if(empregado.getNome() != null) {System.out.print(nome + "1");}
-		return empregado.AdicionarEmpregado(nome, endereco, tipo, salario);
+		//System.out.print(nome + "    1");
+		return ControladorEmpregados.AdicionarEmpregado(nome, endereco, tipo, salario);
+	}
+	
+	public String criarEmpregado(String nome, String endereco, String tipo, String salario, String comissao) throws NomeNulo, EnderecoNulo, TipoInvalido, SalarioNulo, SalarioNegativo, SalarioNumerico, ComissaoNula, ComissaoNumerica, ComissaoNegativa, TipoNaoAplicavel {
+		return ControladorEmpregados.AdicionarComissionado(nome, endereco, tipo, salario, comissao);
 	}
 	
 	
