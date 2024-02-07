@@ -25,6 +25,7 @@ public class ControladorEmpregados {
 	
 	public static void encerrarSistema() throws FileNotFoundException {
 		XMLEncoder encoder = new XMLEncoder(new BufferedOutputStream(new FileOutputStream("empregados.xml")));
+		
 		encoder.writeObject(empregadosPersistencia);
 		//encoder.writeObject(empregados);
 		encoder.close();
@@ -34,16 +35,44 @@ public class ControladorEmpregados {
 	public static void iniciarSistema() throws FileNotFoundException {
 		XMLDecoder decoder = new XMLDecoder(new BufferedInputStream(new FileInputStream("empregados.xml")));
 		empregadosPersistencia = (ArrayList<Empregado>) decoder.readObject();
+		//System.out.println("cuuu" + empregadosPersistencia.toString());
 		//empregados = (LinkedHashMap<String, Empregado>) decoder.readObject();
 		for(Empregado i : empregadosPersistencia) {
 			empregados.put(i.getId(), i);
+			//System.out.println("--->" + i.getSalario());
 		}
+		
 		decoder.close();
 	}
 	
-	public static void esqueci() {
+	public static void esqueci() throws FileNotFoundException {
 		empregados.clear();
+		XMLEncoder encoder = new XMLEncoder(new BufferedOutputStream(new FileOutputStream("empregados.xml")));
+		for(Empregado i : empregadosPersistencia) {
+			encoder.remove(i);// nao testei
+		}
 		empregadosPersistencia.clear();
+		
+	}
+	
+	public static String getEmpregadoPorNome(String nome, int indice) throws NaoTrabalhaAqui {
+		String idAchado = null;
+		
+		//System.out.println("assôoooooooo");
+		for (String key: empregados.keySet()) {
+			
+			if(empregados.get(key).getNome().equals(nome)) {
+				indice--;
+				if(indice == 0) {
+					idAchado = empregados.get(key).getId();
+					return idAchado;
+				}
+				//System.out.println("assôoooooooo");	
+			}
+		}
+		throw new NaoTrabalhaAqui();
+		//System.out.println(idAchado);
+		
 	}
 	
 	public static String getAtributoEmpregado(String id, String atributo) throws EmpregadoNaoExiste, IdNula, AtributoNaoExiste {
@@ -118,6 +147,7 @@ public class ControladorEmpregados {
     	empregados.put(id, novo);
     	novo.setId(id);
     	empregadosPersistencia.add(novo);
+    	//System.out.println("therezaaa" + id);
     	return id;
     }
 	
@@ -177,12 +207,6 @@ public class ControladorEmpregados {
     	    return false;  
     	  }  
     	}
-
-	
-
-	
-
-	
 	
 	
 }

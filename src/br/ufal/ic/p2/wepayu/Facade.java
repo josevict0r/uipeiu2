@@ -21,12 +21,16 @@ public class Facade {
 		ControladorEmpregados.iniciarSistema();
 	}
 	
-	public void zerarSistema() {
+	public void zerarSistema() throws FileNotFoundException {
 		ControladorEmpregados.esqueci();
 	}
 	
 	public void encerrarSistema() throws FileNotFoundException {
 		ControladorEmpregados.encerrarSistema();
+	}
+	
+	public String getEmpregadoPorNome(String nome, int indice) throws NaoTrabalhaAqui {
+		return ControladorEmpregados.getEmpregadoPorNome(nome, indice);
 	}
 	
 	public String getAtributoEmpregado(String emp, String atributo) throws EmpregadoNaoExiste, IdNula, AtributoNaoExiste {

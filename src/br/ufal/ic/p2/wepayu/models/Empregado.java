@@ -50,7 +50,29 @@ public class Empregado {
         return id;
     }
 
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+	
+	public void setEndereco(String endereco) {
+		this.endereco = endereco;
+	}
+	
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+	
+	public void setSalario(String salario) {
+		this.salario = salario;
+	}
+	
+	public void setSindicalizado(boolean sindicalizado) {
+		this.sindicalizado = sindicalizado;
+	}
+	
 	public void setId(String id) {
 		this.id = id;
 	} 
+	
+	
 }

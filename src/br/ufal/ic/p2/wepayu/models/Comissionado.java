@@ -17,4 +17,8 @@ public class Comissionado extends Empregado{
         return comissao;
     }
     
+    public void setComissao(String comissao) {
+    	this.comissao = comissao;
+    }
+    
 }
