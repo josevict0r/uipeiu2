@@ -1,5 +1,7 @@
 package br.ufal.ic.p2.wepayu;
 
+import java.io.FileNotFoundException;
+
 import br.ufal.ic.p2.wepayu.Exception.*;
 //import br.ufal.ic.p2.wepayu.Exception.EmpregadoNaoExisteException;
 //import br.ufal.ic.p2.wepayu.models.Empregado;
@@ -14,11 +16,16 @@ public class Facade {
 
 	//private ControladorEmpregados controlador;
 	
+	public Facade() throws FileNotFoundException {
+		//ControladorEmpregados.encerrarSistema();
+		ControladorEmpregados.iniciarSistema();
+	}
+	
 	public void zerarSistema() {
 		ControladorEmpregados.esqueci();
 	}
 	
-	public void encerrarSistema() {
+	public void encerrarSistema() throws FileNotFoundException {
 		ControladorEmpregados.encerrarSistema();
 	}
 	

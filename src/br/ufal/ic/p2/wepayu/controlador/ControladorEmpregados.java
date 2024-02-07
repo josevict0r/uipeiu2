@@ -4,19 +4,46 @@ import br.ufal.ic.p2.wepayu.Exception.*;
 import br.ufal.ic.p2.wepayu.models.Empregado;
 import br.ufal.ic.p2.wepayu.models.Comissionado;
 
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
-//import java.util.ArrayList;
+import java.util.ArrayList;
 //import java.util.HashMap;
 //import java.util.List;
 //import java.util.Map;
 
 public class ControladorEmpregados {
 	static LinkedHashMap<String, Empregado> empregados = new LinkedHashMap<String, Empregado>();
+	static ArrayList<Empregado> empregadosPersistencia = new ArrayList<Empregado>();
+	
+	public static void encerrarSistema() throws FileNotFoundException {
+		XMLEncoder encoder = new XMLEncoder(new BufferedOutputStream(new FileOutputStream("empregados.xml")));
+		encoder.writeObject(empregadosPersistencia);
+		//encoder.writeObject(empregados);
+		encoder.close();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static void iniciarSistema() throws FileNotFoundException {
+		XMLDecoder decoder = new XMLDecoder(new BufferedInputStream(new FileInputStream("empregados.xml")));
+		empregadosPersistencia = (ArrayList<Empregado>) decoder.readObject();
+		//empregados = (LinkedHashMap<String, Empregado>) decoder.readObject();
+		for(Empregado i : empregadosPersistencia) {
+			empregados.put(i.getId(), i);
+		}
+		decoder.close();
+	}
 	
 	public static void esqueci() {
 		empregados.clear();
+		empregadosPersistencia.clear();
 	}
 	
 	public static String getAtributoEmpregado(String id, String atributo) throws EmpregadoNaoExiste, IdNula, AtributoNaoExiste {
@@ -32,8 +59,6 @@ public class ControladorEmpregados {
 		
 		if(atributo.equals("nome")) {
 			resultado = buscado.getNome();
-			//System.out.println(atributo + "CU");
-			//System.out.println(resultado + "cuzinho");
 		}
 		else if(atributo.equals("endereco")) {
 			resultado = buscado.getEndereco();
@@ -70,7 +95,6 @@ public class ControladorEmpregados {
     		throw new NomeNulo();
     	}
     	if(novo.getEndereco().isBlank()) {
-    		//System.out.print("CUUUUU");
     		throw new EnderecoNulo();
     	}
     	//System.out.print(novo.tipo);
@@ -91,8 +115,9 @@ public class ControladorEmpregados {
     		throw new SalarioNumerico();
     	}
     	
-    	
     	empregados.put(id, novo);
+    	novo.setId(id);
+    	empregadosPersistencia.add(novo);
     	return id;
     }
 	
@@ -105,7 +130,6 @@ public class ControladorEmpregados {
     		throw new NomeNulo();
     	}
     	if(novo.getEndereco().isBlank()) {
-    		//System.out.print("CUUUUU");
     		throw new EnderecoNulo();
     	}
     	//System.out.print(novo.tipo);
@@ -138,7 +162,10 @@ public class ControladorEmpregados {
     			throw new ComissaoNegativa();
     		}
     	}
+    	
     	empregados.put(id, novo);
+    	novo.setId(id);
+    	empregadosPersistencia.add(novo);
     	return id;
 	}
     
@@ -151,9 +178,9 @@ public class ControladorEmpregados {
     	  }  
     	}
 
-	public static void encerrarSistema() {
-				
-	}
+	
+
+	
 
 	
 	
