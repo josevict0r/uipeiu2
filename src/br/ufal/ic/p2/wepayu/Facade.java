@@ -29,6 +29,22 @@ public class Facade {
 		ControladorEmpregados.encerrarSistema();
 	}
 	
+	public String getHorasExtrasTrabalhadas(String emp, String dataInicial, String dataFinal) throws NaoHorista, dataInicialInvalida, dataFinalInvalida, ViagemNoTempo {
+		return ControladorEmpregados.getHorasTrabalhadas(emp, dataInicial, dataFinal, 0);
+	}
+	
+	public String getHorasNormaisTrabalhadas(String emp, String dataInicial, String dataFinal) throws NaoHorista, dataInicialInvalida, dataFinalInvalida, ViagemNoTempo {
+		return ControladorEmpregados.getHorasTrabalhadas(emp, dataInicial, dataFinal, 1);
+	}
+	
+	public void lancaCartao(String emp, String data, String horas) throws IdNula, EmpregadoNaoExiste, NaoHorista, DataInvalida, HoraNegativa {
+		ControladorEmpregados.lancaCartao(emp, data, horas);
+	}
+	
+	public void removerEmpregado(String emp) throws EmpregadoNaoExiste, IdNula {
+		ControladorEmpregados.removerEmpregado(emp);
+	}
+	
 	public String getEmpregadoPorNome(String nome, int indice) throws NaoTrabalhaAqui {
 		return ControladorEmpregados.getEmpregadoPorNome(nome, indice);
 	}

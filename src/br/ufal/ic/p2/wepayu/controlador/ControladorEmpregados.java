@@ -1,8 +1,7 @@
 package br.ufal.ic.p2.wepayu.controlador;
 
 import br.ufal.ic.p2.wepayu.Exception.*;
-import br.ufal.ic.p2.wepayu.models.Empregado;
-import br.ufal.ic.p2.wepayu.models.Comissionado;
+import br.ufal.ic.p2.wepayu.models.*;
 
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
@@ -10,6 +9,8 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.io.FileNotFoundException;
 import java.util.LinkedHashMap;
 import java.util.UUID;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 public class ControladorEmpregados {
 	static LinkedHashMap<String, Empregado> empregados = new LinkedHashMap<String, Empregado>();
 	static ArrayList<Empregado> empregadosPersistencia = new ArrayList<Empregado>();
+	static ArrayList<Cartao> cartoes = new ArrayList<Cartao>();
 	
 	public static void encerrarSistema() throws FileNotFoundException {
 		XMLEncoder encoder = new XMLEncoder(new BufferedOutputStream(new FileOutputStream("empregados.xml")));
@@ -53,6 +55,119 @@ public class ControladorEmpregados {
 		}
 		empregadosPersistencia.clear();
 		
+	}
+	
+	public static String getHorasTrabalhadas(String emp, String dataInicial, String dataFinal, int NormalOuExtra) throws NaoHorista, dataInicialInvalida, dataFinalInvalida, ViagemNoTempo {
+		double horasNormais = 0;
+		double horasExtras = 0;
+		if(!empregados.get(emp).getTipo().equals("horista")) throw new NaoHorista();
+		
+		
+        String[] diaMesAnoStrI = dataInicial.split("/");
+        ArrayList<Integer> diaMesAnoI = new ArrayList<Integer>();
+		diaMesAnoI.add(Integer.parseInt(diaMesAnoStrI[0]));
+		diaMesAnoI.add(Integer.parseInt(diaMesAnoStrI[1]));
+		diaMesAnoI.add(Integer.parseInt(diaMesAnoStrI[2]));
+        
+		String[] diaMesAnoStrF = dataFinal.split("/");
+		ArrayList<Integer> diaMesAnoF = new ArrayList<Integer>();
+		diaMesAnoF.add(Integer.parseInt(diaMesAnoStrF[0]));
+		diaMesAnoF.add(Integer.parseInt(diaMesAnoStrF[1]));
+		diaMesAnoF.add(Integer.parseInt(diaMesAnoStrF[2]));
+        
+        
+        if(diaMesAnoI.get(0) > 31) throw new dataInicialInvalida();
+		if(diaMesAnoF.get(1) == 2) {
+			if(diaMesAnoF.get(0) > 29) throw new dataFinalInvalida();
+		}
+		if(diaMesAnoI.get(1) >= diaMesAnoF.get(1)){
+			if(diaMesAnoI.get(0) > diaMesAnoF.get(0)) throw new ViagemNoTempo();
+			}
+		
+        DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("d/M/yyyy");
+        LocalDate Inicial, Final;
+        
+        Inicial = LocalDate.parse(dataInicial, formatoData);
+        Final = LocalDate.parse(dataFinal, formatoData);
+        
+		for(Cartao cartao : cartoes) {
+			//if(cartao.getId().equals(emp) && cartao.getData().equals(Final)) {// CHEGOU NA DATA FINAL ENTAO BREAK
+			//	System.out.println(horasNormais);
+			//	break;
+			//}
+			if(cartao.getId().equals(emp)) {
+				//System.out.println("data = " + cartao.getData());
+				//System.out.println("inicial = " + Inicial.toString());
+				//System.out.println("final = " + Final.toString());
+				if(cartao.getId().equals(emp) && cartao.getData().equals(Final)) break;
+				if (cartao.getData().isEqual(Inicial) || (cartao.getData().isAfter(Inicial) && cartao.getData().isBefore(Final))) {//DA ERRADO DE UM DIA PRO OUTRO
+					if(cartao.getHoras() > 8) {
+						horasNormais += 8;
+						
+						horasExtras += cartao.getHoras()-8;
+						//((cartoes.get(i).getData().isAfter(Inicial) && cartoes.get(i).getData().isBefore(Final))
+					}
+					else horasNormais += cartao.getHoras();
+				}
+				//System.out.println(horasNormais);
+			}
+		}
+		String horasNormaisStr = (Double.toString(horasNormais)).replace(".", ",");
+		if(horasNormais - (int) horasNormais == 0) {
+			String[] horasNormaisStrsplit = horasNormaisStr.split(",");
+			horasNormaisStr = horasNormaisStrsplit[0];
+		}
+		
+		String horasExtrasStr = (Double.toString(horasExtras)).replace(".", ",");
+		if(horasExtras - (int) horasExtras == 0) {
+			String[] horasExtrasStrsplit = horasExtrasStr.split(",");
+			horasExtrasStr = horasExtrasStrsplit[0];
+		}
+		
+		//System.out.println("---->normais = " + horasNormais);
+        //System.out.println("---->extras = " + horasExtras);
+		if(NormalOuExtra == 1) return horasNormaisStr;
+		else return horasExtrasStr;	
+	}
+	
+	public static void lancaCartao(String emp, String data, String horas) throws IdNula, EmpregadoNaoExiste, NaoHorista, DataInvalida, HoraNegativa {
+		double horasNum = Double.parseDouble(horas.replace(",", "."));
+		
+		if(emp.isEmpty()) {
+			throw new IdNula();
+		}
+		if(empregados.get(emp) == null) {
+			throw new EmpregadoNaoExiste();
+		}
+		if(!empregados.get(emp).getTipo().equals("horista")) {
+			throw new NaoHorista();
+		}
+		String[] diaMesAnoStr = data.split("/"); 
+		ArrayList<Integer> diaMesAno = new ArrayList<Integer>();
+		diaMesAno.add(Integer.parseInt(diaMesAnoStr[0]));
+		diaMesAno.add(Integer.parseInt(diaMesAnoStr[1]));
+		diaMesAno.add(Integer.parseInt(diaMesAnoStr[2]));             //Convertendo a data para int pra poder fazer os testes de erro
+		data = (Integer.toString((int) diaMesAno.get(0)).concat("/" + Integer.toString((int)diaMesAno.get(1)))).concat("/" + Integer.toString((int)diaMesAno.get(2)));
+		//System.out.println("---->" + diaMesAno.get(1));
+		//System.out.println(data);		
+		if(diaMesAno.get(1) >= 13) throw new DataInvalida();
+		if(horasNum <= 0) throw new HoraNegativa();
+		
+		
+		DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("d/M/yyyy");
+        LocalDate dataobj;
+        dataobj = LocalDate.parse(data, formatoData);
+        
+        
+		Cartao cartao = new Cartao(emp, dataobj, horasNum);
+		cartoes.add(cartao);
+	}
+	
+	public static void removerEmpregado(String id) throws EmpregadoNaoExiste, IdNula {
+		if(id.isEmpty()) throw new IdNula();
+		if(!(empregados.containsKey(id))) throw new EmpregadoNaoExiste();
+		empregadosPersistencia.remove(empregados.get(id));
+		empregados.remove(id);
 	}
 	
 	public static String getEmpregadoPorNome(String nome, int indice) throws NaoTrabalhaAqui {
@@ -206,7 +321,5 @@ public class ControladorEmpregados {
     	  } catch(NumberFormatException e){  
     	    return false;  
     	  }  
-    	}
-	
-	
+    	}		
 }

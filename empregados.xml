@@ -7,51 +7,13 @@
      <string>Rua dos Jooes, 333 - Campina Grande</string>
     </void>
     <void property="id">
-     <string>1069df3b-e12c-4b90-a38e-b903d515d324</string>
+     <string>cfd498fd-0348-44d7-8e97-ca186316de65</string>
     </void>
     <void property="nome">
      <string>Joao da Silva</string>
     </void>
     <void property="salario">
      <string>23</string>
-    </void>
-    <void property="tipo">
-     <string>horista</string>
-    </void>
-   </object>
-  </void>
-  <void method="add">
-   <object class="br.ufal.ic.p2.wepayu.models.Empregado">
-    <void property="endereco">
-     <string>Rua dos Jooes, 333 - Campina Grande</string>
-    </void>
-    <void property="id">
-     <string>4f180925-c8e9-4a03-a022-0f1081e85794</string>
-    </void>
-    <void property="nome">
-     <string>Joao da Silva</string>
-    </void>
-    <void property="salario">
-     <string>23</string>
-    </void>
-    <void property="tipo">
-     <string>horista</string>
-    </void>
-   </object>
-  </void>
-  <void method="add">
-   <object class="br.ufal.ic.p2.wepayu.models.Empregado">
-    <void property="endereco">
-     <string>Rua dos Jooes, 333 - Campina Grande</string>
-    </void>
-    <void property="id">
-     <string>3f113b4b-dcca-444b-ba2c-72242501ede7</string>
-    </void>
-    <void property="nome">
-     <string>Joao da Silva</string>
-    </void>
-    <void property="salario">
-     <string>23,32</string>
     </void>
     <void property="tipo">
      <string>horista</string>
@@ -64,16 +26,16 @@
      <string>Rua das Marias, 333 - Campina Grande</string>
     </void>
     <void property="id">
-     <string>762efddd-203c-4c78-a577-6788518b1d80</string>
+     <string>6f8c8e46-2ff7-4587-bcaf-2717370f68da</string>
     </void>
     <void property="nome">
      <string>Mariazinha</string>
     </void>
     <void property="salario">
-     <string>2300,45</string>
+     <string>2300</string>
     </void>
     <void property="tipo">
-     <string>assalariado</string>
+     <string>horista</string>
     </void>
    </object>
   </void>
@@ -86,16 +48,35 @@
      <string>Rua dos Bufoes, 333 - Campina Grande</string>
     </void>
     <void property="id">
-     <string>85cfa04a-fca3-4250-bb24-ed6cace87851</string>
+     <string>9b368e27-0b4c-45d1-9d0d-f30046a0e664</string>
     </void>
     <void property="nome">
      <string>Gaiato Vendedor</string>
     </void>
     <void property="salario">
-     <string>2300,45</string>
+     <string>1300</string>
     </void>
     <void property="tipo">
      <string>comissionado</string>
+    </void>
+   </object>
+  </void>
+  <void method="add">
+   <object class="br.ufal.ic.p2.wepayu.models.Empregado">
+    <void property="endereco">
+     <string>Rua das Marias, 333 - Campina Grande</string>
+    </void>
+    <void property="id">
+     <string>b72cf729-20a0-4130-9733-feeb573a9160</string>
+    </void>
+    <void property="nome">
+     <string>Gorete</string>
+    </void>
+    <void property="salario">
+     <string>2300</string>
+    </void>
+    <void property="tipo">
+     <string>assalariado</string>
     </void>
    </object>
   </void>
