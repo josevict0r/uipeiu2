@@ -29,6 +29,15 @@ public class Facade {
 		ControladorEmpregados.encerrarSistema();
 	}
 	
+	public String getVendasRealizadas(String emp,String dataInicial, String dataFinal) throws dataInicialInvalida, NaoComissionado, dataFinalInvalida, ViagemNoTempo {
+		return ControladorEmpregados.getVendasRealizadas(emp, dataInicial, dataFinal);
+	}
+
+	
+	public void lancaVenda(String emp, String data, String valor) throws IdNula, EmpregadoNaoExiste, NaoComissionado, ValorNegativo, DataInvalida {
+		ControladorEmpregados.lancaVenda(emp, data, valor);
+	}
+	
 	public String getHorasExtrasTrabalhadas(String emp, String dataInicial, String dataFinal) throws NaoHorista, dataInicialInvalida, dataFinalInvalida, ViagemNoTempo {
 		return ControladorEmpregados.getHorasTrabalhadas(emp, dataInicial, dataFinal, 0);
 	}
