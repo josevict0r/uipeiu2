@@ -41,7 +41,6 @@ public class ControladorEmpregados {
 	public static void iniciarSistema() throws FileNotFoundException {
 		XMLDecoder decoder = new XMLDecoder(new BufferedInputStream(new FileInputStream("empregados.xml")));
 		empregadosPersistencia = (ArrayList<Empregado>) decoder.readObject();
-		//System.out.println("cuuu" + empregadosPersistencia.toString());
 		//empregados = (LinkedHashMap<String, Empregado>) decoder.readObject();
 		for(Empregado i : empregadosPersistencia) {
 			empregados.put(i.getId(), i);
@@ -59,6 +58,74 @@ public class ControladorEmpregados {
 		//}
 		empregadosPersistencia.clear();
 		
+	}
+	
+	public static void alteraAtributoEmpregado(String emp, String atributo, String valor1) throws NaoComissionado, NomeNulo, EnderecoNulo, TipoInvalido, SalarioNulo {
+		
+		/*
+		if(atributo.equals("nome") && valor1.equals("false")) {
+    		throw new NomeNulo();
+    	}
+    	if(atributo.equals("endereco") && valor1.equals("false")) {
+    		throw new EnderecoNulo();
+    	}
+    	//System.out.print(novo.tipo);
+    	if(atributo.equals("tipo") && valor1.equals("false")) {
+    		throw new TipoInvalido();
+    	}
+    	if(atributo.equals("salario") && valor1.equals("false")) {
+    		throw new SalarioNulo();
+    	}
+    	if(novo.getSalario().contains("-")) {
+    		throw new SalarioNegativo();
+    	}
+    	if(!isNumeric(novo.getSalario().replace(",", "."))) {
+    		throw new SalarioNumerico();
+    	}*/
+		
+		
+		if(atributo.equals("nome")) {
+			empregados.get(emp).setNome(valor1);
+			//System.out.println(empregados.get(emp));
+		}
+		if(atributo.equals("endereco")) {
+			empregados.get(emp).setEndereco(valor1);
+		}
+		if(atributo.equals("tipo")) {
+			empregados.get(emp).setTipo(valor1);//criar outro com a classe do tipo novo e excluir o que ja tem
+		}
+		if(atributo.equals("salario")) {
+			//String salarioPonto = valor1.replace(",", ".");
+	        //double salarioD = Double.parseDouble(salarioPonto);
+			empregados.get(emp).setSalario(valor1);
+		}
+		if(atributo.equals("comissao")) {
+			if(!empregados.get(emp).getTipo().equals("comissionado")) throw new NaoComissionado();
+			empregados.get(emp).setTipo(valor1);
+			//empregados.get(emp)
+		}
+		/*if(atributo.equals("metodoPagamento")) {
+			empregados.get(emp).setMetodoPagamento(valor1);
+		}
+		if(atributo.equals("banco")) {
+			empregados.get(emp).setEndereco(valor1);
+		}
+		if(atributo.equals("agencia")) {
+			empregados.get(emp).setEndereco(valor1);
+		}
+		if(atributo.equals("contaCorrente")) {
+			empregados.get(emp).setEndereco(valor1);
+		}*/
+	}
+	
+	public static void adicionaMetodoPagamento(String emp, String atributo, String valor1, String banco, String agencia,
+			String contaCorrente) {
+		Banco bancoobj = new Banco(banco, agencia, contaCorrente);
+		empregados.get(emp).setMetodoPagamento(valor1);;
+		
+		if(valor1.equals("banco")) {
+			empregados.get(emp).setBanco(bancoobj);
+		}
 	}
 	
 	public static String getTaxasServico(String emp, String dataInicial, String dataFinal) throws dataInicialInvalida, NaoComissionado, dataFinalInvalida, ViagemNoTempo, NaoSindicalizado {
@@ -386,9 +453,11 @@ public class ControladorEmpregados {
 		
 	}
 	
-	public static String getAtributoEmpregado(String id, String atributo) throws EmpregadoNaoExiste, IdNula, AtributoNaoExiste {
+	public static String getAtributoEmpregado(String id, String atributo) throws EmpregadoNaoExiste, IdNula, AtributoNaoExiste, NaoComissionado, NaoSindicalizado, NaoBanco {
 		String resultado = null;
 		Empregado buscado = empregados.get(id);
+		
+		
 		
 		if(id.isEmpty()) {
 			throw new IdNula();
@@ -416,9 +485,41 @@ public class ControladorEmpregados {
 			boolean cut = buscado.isSindicalizado();// CONVERTER DE BOOL PRA STRING
 			resultado = Boolean.toString(cut);
 		}
-		else if (atributo.equals("comissao")) {
+		else if(atributo.equals("idSindicato")) {
+			if(empregados.get(id).isSindicalizado()) resultado = empregados.get(id).getSindicato().getIdSindicato();
+			else throw new NaoSindicalizado();
+		}
+		else if(atributo.equals("taxaSindical")) {
+			if(empregados.get(id).isSindicalizado()) 
+			{
+				resultado = String.valueOf(empregados.get(id).getSindicato().getTaxaSindical()).replace(".", ",").concat("0");
+			}
+			else throw new NaoSindicalizado();
+		}
+		else if (atributo.equals("comissao") && buscado.getTipo().equals("comissionado")) {
 			Comissionado casted = (Comissionado) buscado;
 			resultado = casted.getComissao();
+		}
+		
+		else if (atributo.equals("comissao") && !buscado.getTipo().equals("comissionado")) {
+			throw new NaoComissionado();
+		}
+		else if(atributo.equals("metodoPagamento")) {
+			if (empregados.get(id).getMetodoPagamento() == null) {
+				resultado = "emMaos";
+				}
+		}
+		else if(atributo.equals("agencia")) {
+			if(empregados.get(id).getBanco() == null) throw new NaoBanco();
+			else resultado = empregados.get(id).getBanco().getAgencia();
+		}
+		else if(atributo.equals("contaCorrente")) {
+			if(empregados.get(id).getBanco() == null) throw new NaoBanco();
+			else resultado = empregados.get(id).getBanco().getContaCorrente();
+		}
+		else if(atributo.equals("banco")) {
+			if(empregados.get(id).getBanco() == null) throw new NaoBanco();
+			else resultado = empregados.get(id).getBanco().getNome();
 		}
 		else {
 			throw new AtributoNaoExiste();
@@ -458,7 +559,6 @@ public class ControladorEmpregados {
     	empregados.put(id, novo);
     	novo.setId(id);
     	empregadosPersistencia.add(novo);
-    	//System.out.println("therezaaa" + id);
     	return id;
     }
 	
@@ -517,7 +617,5 @@ public class ControladorEmpregados {
     	  } catch(NumberFormatException e){  
     	    return false;  
     	  }  
-    	}
-
-		
+    }			
 }

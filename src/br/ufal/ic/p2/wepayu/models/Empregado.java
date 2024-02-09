@@ -13,6 +13,8 @@ public class Empregado {
     private boolean sindicalizado;
     private String id;
     private Sindicato sindicato;
+    protected String metodoPagamento;
+    protected Banco banco;
 
     //private ArrayList<Empregado> empregados = new ArrayList<Empregado>();
     public Empregado() {}
@@ -26,6 +28,8 @@ public class Empregado {
         this.sindicalizado = false;
         this.id = null;
         this.sindicato = null;
+        this.metodoPagamento = null;
+        this.banco = null;
     }
 
     public String getNome() {
@@ -84,7 +88,19 @@ public class Empregado {
 		this.sindicato = sindicato;
 	}
 
+	public String getMetodoPagamento() {
+		return metodoPagamento;
+	}
+
+	public void setMetodoPagamento(String metodoPagamento) {
+		this.metodoPagamento = metodoPagamento;
+	}	
 	
-	
-	
+	public Banco getBanco() {
+		return banco;
+	}
+
+	public void setBanco(Banco banco) {
+		this.banco = banco;
+	}	
 }

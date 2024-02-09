@@ -33,7 +33,10 @@ public class Facade {
 		return ControladorEmpregados.getTaxasServico(emp, dataInicial, dataFinal);
 	}
 	
-	//<void> alteraEmpregado emp=<String> atributo=<String> valor1=<String>
+	public void alteraEmpregado(String emp, String atributo, String valor1) throws NaoComissionado, NomeNulo, EnderecoNulo, TipoInvalido, SalarioNulo {
+		ControladorEmpregados.alteraAtributoEmpregado(emp, atributo, valor1);
+	}
+	
 	public void alteraEmpregado(String emp, String atributo, boolean valor1) {
 		ControladorEmpregados.dessindicaliza(emp, atributo, valor1);
 	}
@@ -41,7 +44,9 @@ public class Facade {
 	public void alteraEmpregado(String emp, String atributo, boolean valor, String idSindicato, String taxaSindical) throws SindicatoRepetido {
 		ControladorEmpregados.sindicaliza(emp, atributo, valor, idSindicato, taxaSindical);
 	}
-	//<void> alteraEmpregado emp=<String> atributo=metodoPagamento valor1=banco banco=<String> agencia=<String> contaCorrente=<String>
+	public void alteraEmpregado(String emp, String atributo, String valor1, String banco, String agencia, String contaCorrente) {
+		ControladorEmpregados.adicionaMetodoPagamento(emp, atributo, valor1, banco, agencia, contaCorrente);
+	}
 
 	
 	public void lancaTaxaServico(String emp, String data, String valor) throws IdNula, EmpregadoNaoExiste, NaoComissionado, DataInvalida, ValorNegativo, MembroNaoExiste, idSindicatoNula {
@@ -77,7 +82,7 @@ public class Facade {
 		return ControladorEmpregados.getEmpregadoPorNome(nome, indice);
 	}
 	
-	public String getAtributoEmpregado(String emp, String atributo) throws EmpregadoNaoExiste, IdNula, AtributoNaoExiste {
+	public String getAtributoEmpregado(String emp, String atributo) throws EmpregadoNaoExiste, IdNula, AtributoNaoExiste, NaoComissionado, NaoSindicalizado, NaoBanco {
 		return ControladorEmpregados.getAtributoEmpregado(emp, atributo);
 	}	
 	public String criarEmpregado(String nome, String endereco, String tipo, String salario) throws NomeNulo, EnderecoNulo, TipoInvalido, SalarioNulo, SalarioNegativo, SalarioNumerico, TipoNaoAplicavel {
