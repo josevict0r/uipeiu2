@@ -12,6 +12,7 @@ public class Empregado {
     private String salario;
     private boolean sindicalizado;
     private String id;
+    private Sindicato sindicato;
 
     //private ArrayList<Empregado> empregados = new ArrayList<Empregado>();
     public Empregado() {}
@@ -24,6 +25,7 @@ public class Empregado {
         this.salario = salario;
         this.sindicalizado = false;
         this.id = null;
+        this.sindicato = null;
     }
 
     public String getNome() {
@@ -72,7 +74,17 @@ public class Empregado {
 	
 	public void setId(String id) {
 		this.id = id;
-	} 
+	}
+
+	public Sindicato getSindicato() {
+		return sindicato;
+	}
+
+	public void setSindicato(Sindicato sindicato) {
+		this.sindicato = sindicato;
+	}
+
+	
 	
 	
 }

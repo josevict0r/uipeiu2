@@ -29,6 +29,25 @@ public class Facade {
 		ControladorEmpregados.encerrarSistema();
 	}
 	
+	public static String getTaxasServico(String emp, String dataInicial, String dataFinal) throws dataInicialInvalida, NaoComissionado, dataFinalInvalida, ViagemNoTempo, NaoSindicalizado {
+		return ControladorEmpregados.getTaxasServico(emp, dataInicial, dataFinal);
+	}
+	
+	//<void> alteraEmpregado emp=<String> atributo=<String> valor1=<String>
+	public void alteraEmpregado(String emp, String atributo, boolean valor1) {
+		ControladorEmpregados.dessindicaliza(emp, atributo, valor1);
+	}
+	
+	public void alteraEmpregado(String emp, String atributo, boolean valor, String idSindicato, String taxaSindical) throws SindicatoRepetido {
+		ControladorEmpregados.sindicaliza(emp, atributo, valor, idSindicato, taxaSindical);
+	}
+	//<void> alteraEmpregado emp=<String> atributo=metodoPagamento valor1=banco banco=<String> agencia=<String> contaCorrente=<String>
+
+	
+	public void lancaTaxaServico(String emp, String data, String valor) throws IdNula, EmpregadoNaoExiste, NaoComissionado, DataInvalida, ValorNegativo, MembroNaoExiste, idSindicatoNula {
+		ControladorEmpregados.lancaTaxaServico(emp, data, valor);
+	}
+	
 	public String getVendasRealizadas(String emp,String dataInicial, String dataFinal) throws dataInicialInvalida, NaoComissionado, dataFinalInvalida, ViagemNoTempo {
 		return ControladorEmpregados.getVendasRealizadas(emp, dataInicial, dataFinal);
 	}

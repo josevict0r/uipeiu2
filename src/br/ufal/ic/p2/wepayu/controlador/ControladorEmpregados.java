@@ -25,6 +25,9 @@ public class ControladorEmpregados {
 	static ArrayList<Empregado> empregadosPersistencia = new ArrayList<Empregado>();
 	static ArrayList<Cartao> cartoes = new ArrayList<Cartao>();
 	static ArrayList<Venda> vendas = new ArrayList<Venda>();
+	static ArrayList<TaxaServico> taxas = new ArrayList<TaxaServico>();
+	static LinkedHashMap<String, Sindicato> sindicatos = new LinkedHashMap<String, Sindicato>();
+	
 	
 	public static void encerrarSistema() throws FileNotFoundException {
 		XMLEncoder encoder = new XMLEncoder(new BufferedOutputStream(new FileOutputStream("empregados.xml")));
@@ -56,6 +59,110 @@ public class ControladorEmpregados {
 		//}
 		empregadosPersistencia.clear();
 		
+	}
+	
+	public static String getTaxasServico(String emp, String dataInicial, String dataFinal) throws dataInicialInvalida, NaoComissionado, dataFinalInvalida, ViagemNoTempo, NaoSindicalizado {
+		double taxasServico = 0;
+		if(!empregados.get(emp).isSindicalizado()) throw new NaoSindicalizado();
+		
+        String[] diaMesAnoStrI = dataInicial.split("/");
+        ArrayList<Integer> diaMesAnoI = new ArrayList<Integer>();
+		diaMesAnoI.add(Integer.parseInt(diaMesAnoStrI[0]));
+		diaMesAnoI.add(Integer.parseInt(diaMesAnoStrI[1]));
+		diaMesAnoI.add(Integer.parseInt(diaMesAnoStrI[2]));
+        
+		String[] diaMesAnoStrF = dataFinal.split("/");
+		ArrayList<Integer> diaMesAnoF = new ArrayList<Integer>();
+		diaMesAnoF.add(Integer.parseInt(diaMesAnoStrF[0]));
+		diaMesAnoF.add(Integer.parseInt(diaMesAnoStrF[1]));
+		diaMesAnoF.add(Integer.parseInt(diaMesAnoStrF[2]));
+        
+        
+        if(diaMesAnoI.get(0) > 31) throw new dataInicialInvalida();
+		if(diaMesAnoF.get(1) == 2) {
+			if(diaMesAnoF.get(0) > 29) throw new dataFinalInvalida();
+		}
+		if(diaMesAnoI.get(1) >= diaMesAnoF.get(1)){
+			if(diaMesAnoI.get(0) > diaMesAnoF.get(0)) throw new ViagemNoTempo();
+			}
+		
+        DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("d/M/yyyy");
+        LocalDate Inicial, Final;
+        
+        Inicial = LocalDate.parse(dataInicial, formatoData);
+        Final = LocalDate.parse(dataFinal, formatoData);
+        
+		for(TaxaServico taxa : taxas) {
+			
+				//if(venda.getId().equals(emp))
+				if(taxa.getIdSindicato().equals(empregados.get(emp).getSindicato().getIdSindicato())) {
+					//System.out.println("-----------------------------------");
+					if(empregados.get(emp).getSindicato().getIdSindicato().equals(taxa.getIdSindicato()) && taxa.getData().equals(Final)) break;
+					if (taxa.getData().isEqual(Inicial) || (taxa.getData().isAfter(Inicial) && taxa.getData().isBefore(Final))) {//DA ERRADO DE UM DIA PRO OUTRO
+						taxasServico += taxa.getValor();
+					}
+				}
+			
+
+			//System.out.println("        valores =" + venda.getValor());
+		}
+		String taxasServicoStr = (Double.toString(taxasServico)).replace(".", ",");//0,00
+		String[] taxasServicoStrsplit = taxasServicoStr.split(",");
+		if(taxasServico - (int) taxasServico == 0) taxasServicoStr = taxasServicoStrsplit[0].concat(",00");
+		if(taxasServicoStrsplit[1].length() == 2) taxasServicoStr = taxasServicoStrsplit[0].concat("," + taxasServicoStrsplit[1]);
+		else taxasServicoStr = taxasServicoStrsplit[0].concat("," + taxasServicoStrsplit[1] + "0");
+		
+		
+		//System.out.println("----->" + taxasServicoStr);
+		return taxasServicoStr;
+	}
+	
+	public static void dessindicaliza(String emp, String atributo, boolean valor1) {
+		empregados.get(emp).setSindicalizado(valor1);
+		empregados.get(emp).setSindicato(null);
+	}
+	
+	public static void sindicaliza(String emp, String atributo, boolean valor, String idSindicato,
+			String taxaSindical) throws SindicatoRepetido {
+		if(sindicatos.containsKey(idSindicato)) throw new SindicatoRepetido();
+		
+		String taxaSindicalPonto = taxaSindical.replace(",", ".");
+        double taxaSindicalD = Double.parseDouble(taxaSindicalPonto);
+        
+		Sindicato sindicato = new Sindicato(idSindicato, taxaSindicalD);
+		sindicatos.put(sindicato.getIdSindicato(), sindicato);
+		
+		empregados.get(emp).setSindicalizado(valor);
+		empregados.get(emp).setSindicato(sindicato);
+	}
+	
+	public static void lancaTaxaServico(String idSindicato, String data, String valor) throws EmpregadoNaoExiste, NaoComissionado, DataInvalida, ValorNegativo, MembroNaoExiste, idSindicatoNula {
+		if(idSindicato.isEmpty()) throw new idSindicatoNula();
+		if(sindicatos.get(idSindicato) == null) throw new MembroNaoExiste();
+		
+		
+		String[] diaMesAnoStr = data.split("/"); 
+		ArrayList<Integer> diaMesAno = new ArrayList<Integer>();
+		diaMesAno.add(Integer.parseInt(diaMesAnoStr[0]));
+		diaMesAno.add(Integer.parseInt(diaMesAnoStr[1]));
+		diaMesAno.add(Integer.parseInt(diaMesAnoStr[2]));             //Convertendo a data para int pra poder fazer os testes de erro
+		data = (Integer.toString((int) diaMesAno.get(0)).concat("/" + Integer.toString((int)diaMesAno.get(1)))).concat("/" + Integer.toString((int)diaMesAno.get(2)));
+			
+		if(diaMesAno.get(1) >= 13) throw new DataInvalida();
+		
+		
+		
+		DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("d/M/yyyy");
+        LocalDate dataobj;
+        dataobj = LocalDate.parse(data, formatoData);
+        
+        String valorPonto = valor.replace(",", ".");
+        double valorD = Double.parseDouble(valorPonto);
+        if(valorD<= 0) throw new ValorNegativo();
+        //System.out.println("        idSindicato ==" + idSindicato);
+        TaxaServico taxaServico = new TaxaServico(idSindicato, dataobj, valorD);
+        
+        taxas.add(taxaServico);
 	}
 	
 	public static String getVendasRealizadas(String emp, String dataInicial, String dataFinal) throws dataInicialInvalida, NaoComissionado, dataFinalInvalida, ViagemNoTempo {
@@ -412,6 +519,5 @@ public class ControladorEmpregados {
     	  }  
     	}
 
-	
 		
 }
